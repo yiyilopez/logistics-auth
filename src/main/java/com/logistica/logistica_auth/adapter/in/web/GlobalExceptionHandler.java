@@ -1,6 +1,6 @@
 package com.logistica.logistica_auth.adapter.in.web;
 
-import com.logistica.logistica_auth.application.service.AuthenticateUserService.AuthCredentialsException;
+import com.logistica.logistica_auth.domain.exception.AuthCredentialsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;

@@ -43,8 +43,8 @@ Respuesta login/refresh incluye `accessToken`, `refreshToken`, `tokenType` (`Bea
 
 ## Paquetes
 
-- `domain` — modelos y puertos  
-- `application` — casos de uso  
+- `domain` — modelos, excepciones de dominio y puertos (entrada/salida)  
+- `application` — casos de uso (solo depende de `domain`)  
 - `adapter.in.web` — REST, DTOs, Spring Security / filtro JWT  
 - `adapter.out.persistence` — JPA  
 - `adapter.out.security` — JWT, BCrypt, refresh  

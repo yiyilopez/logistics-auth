@@ -3,12 +3,13 @@ package com.logistica.logistica_auth.application.service;
 import com.logistica.logistica_auth.domain.model.AuthTokens;
 import com.logistica.logistica_auth.domain.model.UserAccount;
 import com.logistica.logistica_auth.domain.port.in.AuthenticateUserUseCase;
+import com.logistica.logistica_auth.domain.exception.AuthCredentialsException;
 import com.logistica.logistica_auth.domain.port.out.AccessTokenPort;
+import com.logistica.logistica_auth.domain.port.out.AccessTokenTtlPort;
 import com.logistica.logistica_auth.domain.port.out.AuthenticationAuditPort;
 import com.logistica.logistica_auth.domain.port.out.PasswordHasherPort;
 import com.logistica.logistica_auth.domain.port.out.RefreshTokenPort;
 import com.logistica.logistica_auth.domain.port.out.UserAuthenticationPort;
-import com.logistica.logistica_auth.adapter.out.security.JwtProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +21,7 @@ public class AuthenticateUserService implements AuthenticateUserUseCase {
     private final AccessTokenPort accessTokenPort;
     private final RefreshTokenPort refreshTokenPort;
     private final AuthenticationAuditPort authenticationAuditPort;
-    private final long accessTokenSeconds;
+    private final AccessTokenTtlPort accessTokenTtlPort;
 
     public AuthenticateUserService(
             UserAuthenticationPort userAuthenticationPort,
@@ -28,14 +29,14 @@ public class AuthenticateUserService implements AuthenticateUserUseCase {
             AccessTokenPort accessTokenPort,
             RefreshTokenPort refreshTokenPort,
             AuthenticationAuditPort authenticationAuditPort,
-            JwtProperties jwtProperties
+            AccessTokenTtlPort accessTokenTtlPort
     ) {
         this.userAuthenticationPort = userAuthenticationPort;
         this.passwordHasherPort = passwordHasherPort;
         this.accessTokenPort = accessTokenPort;
         this.refreshTokenPort = refreshTokenPort;
         this.authenticationAuditPort = authenticationAuditPort;
-        this.accessTokenSeconds = jwtProperties.getAccessTokenMinutes() * 60L;
+        this.accessTokenTtlPort = accessTokenTtlPort;
     }
 
     @Override
@@ -54,7 +55,7 @@ public class AuthenticateUserService implements AuthenticateUserUseCase {
         authenticationAuditPort.record(user.id(), "login_ok", ip, userAgent, null);
         String access = accessTokenPort.createAccessToken(user);
         var refresh = refreshTokenPort.issue(user);
-        return new AuthTokens(access, refresh.jwt(), accessTokenSeconds);
+        return new AuthTokens(access, refresh.jwt(), accessTokenTtlPort.expiresInSeconds());
     }
 
     @Override
@@ -65,12 +66,6 @@ public class AuthenticateUserService implements AuthenticateUserUseCase {
         String access = accessTokenPort.createAccessToken(user);
         var refresh = refreshTokenPort.issue(user);
         authenticationAuditPort.record(user.id(), "refresh", ip, userAgent, null);
-        return new AuthTokens(access, refresh.jwt(), accessTokenSeconds);
-    }
-
-    public static class AuthCredentialsException extends RuntimeException {
-        public AuthCredentialsException(String message) {
-            super(message);
-        }
+        return new AuthTokens(access, refresh.jwt(), accessTokenTtlPort.expiresInSeconds());
     }
 }
