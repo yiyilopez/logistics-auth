@@ -45,7 +45,7 @@ Las propiedades de Spring Boot admiten **sobreescritura por variables de entorno
 ## Base de datos y migraciones
 
 - Al iniciar, **Flyway** ejecuta los scripts en `src/main/resources/db/migration/`.
-- Los datos iniciales incluyen un usuario de desarrollo: `admin@logistica.local` / `password` (según la migración de seed).
+- Los datos iniciales incluyen usuarios de desarrollo (misma contraseña `password`): `admin@logistica.local`, `operador@logistica.local` (sede `SEDE-MDE-01`), `cliente@logistica.local` (migraciones `V2` y `V3`).
 - En la tabla `refresh_token`, el campo `token_hash` almacena el **SHA-256 en hexadecimal** del JWT de refresh. Las contraseñas de usuario siguen el hash **BCrypt**.
 
 Para desarrollo sin Docker, hay que crear previamente la base y el usuario PostgreSQL coherentes con `application.properties` (o ajustar el archivo).
