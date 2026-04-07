@@ -1,10 +1,9 @@
-# Imagen de ejecución alineada con despliegue (Render / Docker Compose).
-FROM eclipse-temurin:21-jdk-jammy AS build
+# Build sin Maven Wrapper (evita depender de .mvn en Git — Render/GitHub).
+FROM maven:3.9.9-eclipse-temurin-21 AS build
 WORKDIR /app
-COPY mvnw pom.xml .mvn ./
+COPY pom.xml .
 COPY src ./src
-RUN chmod +x mvnw \
-    && ./mvnw -ntp -B -DskipTests package \
+RUN mvn -ntp -B -DskipTests package \
     && mv target/logistica-auth-*.jar /app/application.jar
 
 FROM eclipse-temurin:21-jre-jammy
