@@ -12,6 +12,11 @@ import java.util.UUID;
 @Table(name = "auditoria_autenticacion")
 public class AuditoriaAutenticacionEntity {
 
+    /**
+     * Constructor vacío requerido por JPA para la reflexión y deserialización de entidades.
+     * Las instancias de esta clase deben ser creadas a través del constructor por defecto
+     * antes de ser inicializadas por el ORM.
+     */
     public AuditoriaAutenticacionEntity() {
     }
 
