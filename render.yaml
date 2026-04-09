@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: logistica-auth
+    runtime: java
+    plan: free
+    buildCommand: mvn clean package -DskipTests
+    startCommand: java -jar target/logistica-auth-0.0.1-SNAPSHOT.jar
+    envVars:
+      - key: PORT
+        value: 8080
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: SPRING_DATASOURCE_URL
+        fromDatabase:
+          name: logistica-db
+          property: connectionString
+      - key: SPRING_DATASOURCE_USERNAME
+        fromDatabase:
+          name: logistica-db
+          property: user
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromDatabase:
+          name: logistica-db
+          property: password
+
+  - type: pserv
+    name: logistica-db
+    plan: free
+    ipAllowList: []
+    preDeployCommand: "psql $DATABASE_URL -f db/migrations/init.sql || true"
