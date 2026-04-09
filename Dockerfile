@@ -9,10 +9,8 @@ RUN mvn -ntp -B -DskipTests package \
 FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
 COPY --from=build /app/application.jar application.jar
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 EXPOSE 8080
 ENV SPRING_PROFILES_ACTIVE=prod
-CMD java -jar application.jar \
-    -Dspring.datasource.url=$SPRING_DATASOURCE_URL \
-    -Dspring.datasource.username=$SPRING_DATASOURCE_USERNAME \
-    -Dspring.datasource.password=$SPRING_DATASOURCE_PASSWORD \
-    -Dapp.jwt.secret=$JWT_SECRET
+ENTRYPOINT ["/app/entrypoint.sh"]
