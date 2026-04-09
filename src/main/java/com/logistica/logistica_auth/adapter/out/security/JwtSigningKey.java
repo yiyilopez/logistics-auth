@@ -30,11 +30,11 @@ public final class JwtSigningKey {
      */
     private static byte[] toKeyMaterial(String trimmed) {
         try {
-            byte[] decoded = Decoders.BASE64.decode(trimmed);
+            byte[] decoded = Decoders.BASE64URL.decode(trimmed);
             if (decoded.length >= 32) {
                 return decoded;
             }
-        } catch (IllegalArgumentException ignored) {
+        } catch (RuntimeException ignored) {
             // no es Base64 válido; usar texto plano
         }
         byte[] raw = trimmed.getBytes(StandardCharsets.UTF_8);
