@@ -137,3 +137,29 @@ Incluye `accessToken`, `refreshToken`, `tokenType` (valor `Bearer`) y `expiresIn
 ### Claims del access token
 
 Incluye entre otros: `sub` (UUID de usuario), `typ` con valor `access`, `email`, `role` (código de rol; en Spring Security se expone como `ROLE_<código>`), y `sede` cuando aplica.
+
+---
+
+## Tests
+
+Los tests viven en `src/test/java/` y se ejecutan con:
+
+```bash
+./mvnw verify
+```
+
+### Cobertura actual
+
+| Clase de test | Qué cubre |
+|---|---|
+| `AuthenticateUserServiceTest` | Caso de uso principal: login exitoso, usuario no encontrado, contraseña incorrecta, usuario inactivo, refresh válido e inválido |
+| `GlobalExceptionHandlerTest` | Respuestas HTTP ante excepciones del dominio |
+| `UserAuthenticationAdapterTest` | Adaptador de consulta de usuarios contra PostgreSQL |
+| `AuthenticationAuditAdapterTest` | Persistencia de eventos de auditoría |
+| `BcryptPasswordHasherAdapterTest` | Verificación de contraseñas con BCrypt |
+| `JwtAccessTokenAdapterTest` | Generación y parseo de access tokens JWT |
+| `JwtAccessTokenTtlAdapterTest` | Lectura de TTL del access token desde configuración |
+| `RefreshTokenAdapterTest` | Emisión, validación y consumo de refresh tokens |
+| `TokenHashUtilsTest` | Hash SHA-256 de tokens |
+
+Los tests unitarios usan **JUnit 5 + Mockito**. Hay un feature de Cucumber en `src/test/resources/features/` preparado para pruebas de aceptación.
